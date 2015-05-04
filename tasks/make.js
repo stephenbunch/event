@@ -16,8 +16,7 @@ gulp.task( 'make', function() {
     })
     .transform(
       babelify.configure({
-        sourceRoot: APP_ROOT + '/src',
-        optional: [ 'es7.decorators' ]
+        sourceRoot: APP_ROOT + '/src'
       })
     )
     .bundle()
@@ -25,11 +24,7 @@ gulp.task( 'make', function() {
     .pipe( gulp.dest( 'dist' ) );
 
   var lib = gulp.src( APP_ROOT + '/src/**/*.js' )
-    .pipe(
-      babel({
-        optional: [ 'es7.decorators' ]
-      })
-    )
+    .pipe( babel() )
     .pipe( gulp.dest( APP_ROOT + '/lib' ) );
 
   return merge( bundle, lib );

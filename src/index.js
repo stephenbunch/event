@@ -7,69 +7,113 @@ var gOperands = [];
 var _valueOf;
 var kDelegatesKey = Symbol();
 
-export default function event( prototype, name ) {
+export default function event( prototype, name, descriptor ) {
   Object.defineProperty( prototype, '_' + name, {
     configurable: true,
     enumerable: false,
     get: function() {
-      return getDelegate( this, name );
+      return getDelegate( this, name, descriptor.initializer );
     },
     set: function( value ) {
-      getDelegate( this, name ).set( value );
+      getDelegate( this, name, descriptor.initializer ).set( value );
     }
   });
   return {
     configurable: true,
     enumerable: false,
     get: function() {
-      return getEvent( this, name );
+      return getEvent( this, name, descriptor.initializer );
     },
     set: function( value ) {
-      getDelegate( this, name ).set( value );
+      getDelegate( this, name, descriptor.initializer ).set( value );
     }
   };
 }
 
-function getEvent( context, name ) {
-  return getDelegate( context, name ).event;
+function getEvent( context, name, initializer ) {
+  return getDelegate( context, name, initializer ).event;
 }
 
-function getDelegate( context, name ) {
+function getDelegate( context, name, initializer ) {
   if ( !context[ kDelegatesKey ] ) {
     context[ kDelegatesKey ] = {};
   }
   var delegates = context[ kDelegatesKey ];
   if ( !delegates[ name ] ) {
-    delegates[ name ] = makeDelegate( context );
+    delegates[ name ] = makeDelegate( context, initializer );
   }
   return delegates[ name ];
 }
 
-function makeDelegate( context ) {
-  var listeners = [];
+function makeDelegate( context, initializer ) {
+  var hooks = initializer && initializer() || {};
 
   var delegate = function() {
-    var run = listeners.slice();
-    var i = 0, len = run.length;
-    for ( ; i < len; i++ ) {
-      run[ i ].apply( context, arguments );
+    if ( hooks.raise ) {
+      hooks.raise.apply( context, arguments );
+    } else {
+      let run = delegate.listeners.slice();
+      let i = 0, len = run.length;
+      for ( ; i < len; i++ ) {
+        run[ i ].apply( context, arguments );
+      }
     }
   };
 
+  function didChange() {
+    if ( hooks.didChange ) {
+      hooks.didChange.call( context, delegate.listeners.length );
+    }
+  }
+
+  delegate.listeners = [];
   delegate.valueOf = valueOf;
 
   delegate.addListener = function( listener ) {
-    listeners.push( listener );
+    if ( hooks.add ) {
+      hooks.add.call( context, listener );
+    } else {
+      delegate.listeners.push( listener );
+      didChange();
+    }
   };
 
   delegate.removeListener = function( listener ) {
-    removeFromList( listener, listeners );
+    if ( hooks.remove ) {
+      hooks.remove.call( context, listener );
+    } else {
+      let index = delegate.listeners.indexOf( listener );
+      if ( index > -1 ) {
+        delegate.listeners.splice( index, 1 );
+        didChange();
+      }
+    }
+  };
+
+  delegate.addListenerOnce = function( listener ) {
+    delegate.addListener( function self() {
+      delegate.removeListener( self );
+      listener.apply( this, arguments );
+    });
+  };
+
+  delegate.clearListeners = function() {
+    if ( hooks.clear ) {
+      hooks.clear.call( context );
+    } else {
+      if ( delegate.listeners.length > 0 ) {
+        delegate.listeners.length = 0;
+        didChange();
+      }
+    }
   };
 
   delegate.event = {
     valueOf: valueOf.bind( delegate ),
     addListener: delegate.addListener,
-    removeListener: delegate.removeListener
+    addListenerOnce: delegate.addListenerOnce,
+    removeListener: delegate.removeListener,
+    clearListeners: delegate.clearListeners
   };
 
   delegate.set = function( value ) {
@@ -82,24 +126,17 @@ function makeDelegate( context ) {
       var listener = gOperands[1];
       // The '+=' operator was used (eg. 3 + 3 = 6).
       if ( value === 6 ) {
-        listeners.push( listener );
+        delegate.addListener( listener );
       }
       // The '-=' operator was used (eg. 3 - 3 = 0).
       else if ( value === 0 ) {
-        removeFromList( listener, listeners );
+        delegate.removeListener( listener );
       }
     }
     reset();
   };
 
   return delegate;
-}
-
-function removeFromList( item, list ) {
-  var index = list.indexOf( item );
-  if ( index > -1 ) {
-    list.splice( index, 1 );
-  }
 }
 
 function valueOf() {
