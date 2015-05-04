@@ -1,8 +1,7 @@
 describe( 'events', function() {
 
   class Test {
-    @event
-    myEvent
+    @event myEvent
   }
 
   describe( '+=', function() {
