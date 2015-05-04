@@ -49,15 +49,7 @@ function makeDelegate( context, initializer ) {
   var hooks = initializer && initializer() || {};
 
   var delegate = function() {
-    if ( hooks.raise ) {
-      hooks.raise.apply( context, arguments );
-    } else {
-      let run = delegate.listeners.slice();
-      let i = 0, len = run.length;
-      for ( ; i < len; i++ ) {
-        run[ i ].apply( context, arguments );
-      }
-    }
+    delegate.raise.apply( undefined, arguments );
   };
 
   function didChange() {
@@ -68,6 +60,18 @@ function makeDelegate( context, initializer ) {
 
   delegate.listeners = [];
   delegate.valueOf = valueOf;
+
+  delegate.raise = function() {
+    if ( hooks.raise ) {
+      hooks.raise.apply( context, arguments );
+    } else {
+      let run = delegate.listeners.slice();
+      let i = 0, len = run.length;
+      for ( ; i < len; i++ ) {
+        run[ i ].apply( context, arguments );
+      }
+    }
+  };
 
   delegate.addListener = function( listener ) {
     if ( hooks.add ) {
