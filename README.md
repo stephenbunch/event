@@ -1,6 +1,6 @@
 # @Event
 
-Ever since I worked with C#, I've missed the simplicity of its support for multicast delegates, otherwise known as events. So when I found out about [ES7 decorators](https://github.com/wycats/javascript-decorators), I had to try it out.
+Ever since I worked with C#, I've missed the simplicity of its support for [multicast delegates](https://msdn.microsoft.com/en-us/library/ms173175.aspx) (aka events). So when I found out about [ES7 decorators](https://github.com/wycats/javascript-decorators), I had to try it out.
 
 ```js
 import event from 'event';
