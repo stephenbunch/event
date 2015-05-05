@@ -71,7 +71,7 @@ class MyObject {
 
 Why would we do the same for events?
 
-Additionally, the invocation of events should be hidden to the public. If the object is truly an event emitter, then publishing (raising) events from the outside makes sense. But when an event emitter is used to provide events on an object, consumers of that object expect *the object* to do all the invocations and *no one else!*
+Additionally, the invocation of events should be hidden to the public. If an object is truly an event emitter, then publishing (raising) events from the outside makes sense. But when an event emitter is used to provide events on an object, consumers of that object expect *the object* to do all the invocations and *no one else!*
 
 If you were listening for the 'close' event on a socket, you would not expect someone else to raise that event even though the `emit` method is public.
 
