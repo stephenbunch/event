@@ -40,7 +40,7 @@ describe( 'hooks', function() {
         }
       }
       var obj = new Test();
-      obj._myEvent( 2 );
+      obj._myEvent.raise( 2 );
       expect( raise ).to.have.been.calledWith( 2 );
       expect( raise ).to.have.been.calledOn( obj );
     });

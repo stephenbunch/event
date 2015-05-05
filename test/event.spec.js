@@ -18,7 +18,7 @@ describe( 'event', function() {
     obj.myEvent += function() {
       out = this;
     };
-    obj._myEvent();
+    obj._myEvent.raise();
     expect( out ).to.equal( obj );
   });
 });

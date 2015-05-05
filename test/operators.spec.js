@@ -8,7 +8,7 @@ describe( 'operators', function() {
       var obj = new Test();
       var listener = sinon.stub();
       obj.myEvent += listener;
-      obj._myEvent( 2 );
+      obj._myEvent.raise( 2 );
       expect( listener ).to.have.been.calledWith( 2 );
     });
   });
@@ -23,7 +23,7 @@ describe( 'operators', function() {
       var listener = sinon.stub();
       obj.myEvent += listener;
       obj.myEvent -= listener;
-      obj._myEvent();
+      obj._myEvent.raise();
       expect( listener ).to.not.have.been.called;
     });
 
@@ -38,8 +38,8 @@ describe( 'operators', function() {
         obj.myEvent -= onEvent;
         out = value;
       };
-      obj._myEvent( 2 );
-      obj._myEvent( 5 );
+      obj._myEvent.raise( 2 );
+      obj._myEvent.raise( 5 );
       expect( out ).to.equal( 2 );
     });
   });
