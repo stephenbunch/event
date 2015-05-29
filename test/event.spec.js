@@ -1,3 +1,5 @@
+import event from '../src/index';
+
 describe( 'event', function() {
   it( 'should not be invokable from the outside', function() {
     class Test {

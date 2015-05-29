@@ -1,3 +1,5 @@
+import event from '../src/index';
+
 describe( 'hooks', function() {
   describe( 'add', function() {
     it( 'should override addListener', function() {

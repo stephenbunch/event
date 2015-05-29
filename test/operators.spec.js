@@ -1,3 +1,5 @@
+import event from '../src/index';
+
 describe( 'operators', function() {
   describe( '+=', function() {
     it( 'should add an event listener', function() {
