@@ -1,7 +1,7 @@
 {
   "name": "@stephenbunch/event",
-  "version": "0.1.1",
-  "description": "",
+  "version": "0.1.2",
+  "description": "C# style events using ES7 decorators.",
   "main": "index.js",
   "scripts": {
     "prepublish": "gulp"
