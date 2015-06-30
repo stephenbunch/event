@@ -1,6 +1,6 @@
 {
   "name": "@stephenbunch/event",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "C# style events using ES7 decorators.",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/stephenbunch/event",
   "devDependencies": {
-    "@stephenbunch/buildpack": "^0.1.0",
+    "@stephenbunch/buildpack": "^0.2.0",
     "gulp": "^3.8.11"
   }
 }
